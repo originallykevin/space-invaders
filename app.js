@@ -19,6 +19,46 @@ document.addEventListener('DOMContentLoaded', () => {
   // draw the alien invaders
   alienInvaders.forEach(invader => squares[currentInvaderIndex + invader].classList.add('invader'));
 
+  // move the alien invaders left and right
+  function moveInvaders(e) {
+    const leftEdge = alienInvaders[0] % width === 1;
+    const rightEdge = alienInvaders[alienInvaders.length - 1] % width === width - 1;
+
+    if ((leftEdge && direction === -1) || (rightEdge && direction === 1)) {
+      direction = width; // will move down a whole row
+    } else if (direction === width) {
+      if (leftEdge) direction = 1;
+      else direction = -1;
+    };
+
+    for (let i = 0; i <= alienInvaders.length - 1; i++) {
+      squares[alienInvaders[i]].classList.remove('invader');
+    };
+    for (let i = 0; i <= alienInvaders.length - 1; i++) {
+      alienInvaders[i] += direction;
+    };
+    for (let i = 0; i <= alienInvaders.length - 1; i++) {
+      squares[alienInvaders[i]].classList.add('invader');
+    };
+
+    // GAME OVER
+    // alien invaders hit shooter
+    if (squares[currentShooterIndex].classList.contains('invader', 'shooter')) {
+      resultDisplayer.textContent = 'Game Over';
+      squares[currentShooterIndex].classList.add('boom');
+      clearInterval(invaderId);
+    };
+
+    // aliens miss shooter but hits the end of the grid
+    for (let i = 0; i <= alienInvaders.length - 1; i++) {
+      if (alienInvaders[i] > (squares.length - (width - 1))) {
+        resultDisplayer.textContent = 'Gamer Over';
+        clearInterval(invaderId);
+      };
+    };
+  };
+  invaderId = setInterval(moveInvaders, 750);
+
   // draw the shooter
   squares[currentShooterIndex].classList.add('shooter');
 
@@ -38,8 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
           currentShooterIndex += 1;
         };
         break;
-      };
-      squares[currentShooterIndex].classList.add('shooter');
+    };
+    squares[currentShooterIndex].classList.add('shooter');
   };
 
   document.addEventListener('keydown', moveShooter);
