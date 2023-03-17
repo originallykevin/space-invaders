@@ -84,4 +84,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', moveShooter);
 
+  // laser to shoot alien invaders
+  function shoot(e) {
+    let laserId;
+    let currentLaserIndex = currentShooterIndex;
+    // move laser from shooter to alien invaders
+    function moveLaser() {
+      squares[currentInvaderIndex].classList.remove('laser');
+      currentLaserIndex -= width; // move up 1 whole row
+      squares[currentLaserIndex].classList.add('laser');
+      // when laser hits invader
+      squares[currentLaserIndex].classList.remove('laser');
+      squares[currentLaserIndex].classList.remove('invader');
+      squares[currentLaserIndex].classList.add('boom');
+      // only want boom to appear for short period
+      setTimeout(() => squares[currentLaserIndex].classList.remove('boom'), 250);
+      clearInterval(laserId);
+
+      const alienTakenDown = alienInvaders.indexOf(currentLaserIndex);
+      alienInvadersTakenDown.push(alienTakenDown);
+      result++;
+      resultDisplayer.textContent = result;
+    };
+
+    // laser misses alien and in last row
+    if (currentLaserIndex < width) {
+      clearInterval(laserId);
+      setTimeout(() => squares[currentLaserIndex].classList.remove('laser'), 100);
+    };
+    // add spacekey to fire laser
+    document.addEventListener('keyup', e => {
+      if (e.keyCode === 32) {
+        laserId = setInterval(moveLaser, 100);
+      };
+    });
+  };
+
+  document.addEventListener('keyup', shoot)
 });
