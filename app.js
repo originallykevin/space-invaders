@@ -38,7 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
       alienInvaders[i] += direction;
     };
     for (let i = 0; i <= alienInvaders.length - 1; i++) {
-      squares[alienInvaders[i]].classList.add('invader');
+      // if invaders shot then will not be adding back
+      if (!alienInvadersTakenDown.includes(i)) {
+        squares[alienInvaders[i]].classList.add('invader');
+      };
     };
 
     // GAME OVER
@@ -48,6 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
       squares[currentShooterIndex].classList.add('boom');
       clearInterval(invaderId);
     };
+
+    // deciding a win
+    if (alienInvadersTakenDown.length === alienInvaders.length) {
+      resultDisplayer.text = 'You win!';
+      clearInterval(invaderId);
+    }
 
     // aliens miss shooter but hits the end of the grid
     for (let i = 0; i <= alienInvaders.length - 1; i++) {
@@ -92,19 +101,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function moveLaser() {
       squares[currentInvaderIndex].classList.remove('laser');
       currentLaserIndex -= width; // move up 1 whole row
-      squares[currentLaserIndex].classList.add('laser');
-      // when laser hits invader
-      squares[currentLaserIndex].classList.remove('laser');
-      squares[currentLaserIndex].classList.remove('invader');
-      squares[currentLaserIndex].classList.add('boom');
-      // only want boom to appear for short period
-      setTimeout(() => squares[currentLaserIndex].classList.remove('boom'), 250);
-      clearInterval(laserId);
+      if (squares[currentLaserIndex].classList.contains('invader')) {
+        squares[currentLaserIndex].classList.add('laser');
+        // when laser hits invader
+        squares[currentLaserIndex].classList.remove('laser');
+        squares[currentLaserIndex].classList.remove('invader');
+        squares[currentLaserIndex].classList.add('boom');
+        // only want boom to appear for short period
+        setTimeout(() => squares[currentLaserIndex].classList.remove('boom'), 250);
+        clearInterval(laserId);
 
-      const alienTakenDown = alienInvaders.indexOf(currentLaserIndex);
-      alienInvadersTakenDown.push(alienTakenDown);
-      result++;
-      resultDisplayer.textContent = result;
+        const alienTakenDown = alienInvaders.indexOf(currentLaserIndex);
+        alienInvadersTakenDown.push(alienTakenDown);
+        result++;
+        resultDisplayer.textContent = result;
+      };
     };
 
     // laser misses alien and in last row
@@ -113,12 +124,12 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => squares[currentLaserIndex].classList.remove('laser'), 100);
     };
     // add spacekey to fire laser
-    document.addEventListener('keyup', e => {
-      if (e.keyCode === 32) {
+    switch (e.keyCode) {
+      case 32:
         laserId = setInterval(moveLaser, 100);
-      };
-    });
+        break;
+    };
   };
 
-  document.addEventListener('keyup', shoot)
+  document.addEventListener('keyup', shoot);
 });
