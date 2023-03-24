@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // deciding a win
     if (alienInvadersTakenDown.length === alienInvaders.length) {
-      resultDisplayer.text = 'You win!';
+      resultDisplayer.textContent = 'You win!';
       clearInterval(invaderId);
     }
 
@@ -99,10 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLaserIndex = currentShooterIndex;
     // move laser from shooter to alien invaders
     function moveLaser() {
-      squares[currentInvaderIndex].classList.remove('laser');
+      squares[currentLaserIndex].classList.remove('laser');
       currentLaserIndex -= width; // move up 1 whole row
+      squares[currentLaserIndex].classList.add('laser');
       if (squares[currentLaserIndex].classList.contains('invader')) {
-        squares[currentLaserIndex].classList.add('laser');
         // when laser hits invader
         squares[currentLaserIndex].classList.remove('laser');
         squares[currentLaserIndex].classList.remove('invader');
